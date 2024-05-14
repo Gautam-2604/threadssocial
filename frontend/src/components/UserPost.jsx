@@ -4,7 +4,7 @@ import Actions from "./Actions"
 import { useState } from "react"
 
 
-const UserPost = () => {
+const UserPost = ({likes,replies,postImg,postTitle}) => {
     const [liked, setLiked] = useState(false)
   return (
     <Link to={'/markzuckerberg/post/1'}>
@@ -57,9 +57,9 @@ const UserPost = () => {
 							<BsThreeDots />
 						</Flex>
 					</Flex>
-                    <Text fontSize={"sm"}>This is the first post</Text>
+                    <Text fontSize={"sm"}>{postTitle}</Text>
 					<Box borderRadius={6} overflow={'hidden'} border='1px solid' borderColor='gray.light'>
-                        <Image src="/post1.png" width={'full'} />
+                        <Image src={postImg} width={'full'} />
                     </Box>
 
 					<Flex gap={3} my={1}>
@@ -69,11 +69,11 @@ const UserPost = () => {
 
 					<Flex gap={2} alignItems={"center"}>
 						<Text color={"gray.light"} fontSize='sm'>
-							2 replies
+							{replies} replies
 						</Text>
 						<Box w={0.5} h={0.5} borderRadius={"full"} bg={"gray.light"}></Box>
 						<Text color={"gray.light"} fontSize='sm'>
-							5 likes
+							{likes} likes
 						</Text>
 					</Flex>
 				</Flex>
