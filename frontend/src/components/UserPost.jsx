@@ -63,6 +63,7 @@ const UserPost = () => {
                     </Box>
 
 					<Flex gap={3} my={1}>
+                        {/*Actions from actions component-see*/}
 						<Actions liked={liked} setLiked={setLiked} />
 					</Flex>
 
