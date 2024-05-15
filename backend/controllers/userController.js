@@ -65,5 +65,90 @@ const loginUser = async(req,res)=>{
     }
 }
 
+const logoutUser = async(req,res)=>{
+    try {
+        res.cookie("jwt","",{maxAge:1});
+        res.status(200).json({message:"User logged out successfully"})
+    } catch (error) {
+        res.status(500).json({message:"Error while logging out"});
+        console.log(error.message);
+    }
+}
+//for follow and unFollow
+const followUser = async(req,res)=>{
+    try {
+        const {id}= req.params;
+        //user to be followed or unfollowed
+        const userToModify = await User.findById(id);
+        const currentUser = await User.findById(req.user._id)
 
-export {signupUser, loginUser}
+        if(id===req.user._id){
+            res.status(400).json({message:"You cannot follow/Unfollow yourself"})
+        }
+
+        if(!userToModify || !currentUser){
+            res.status(400).json({message:"No User found"})
+        }
+
+        const isFollowing = currentUser.following.includes(id)
+        if(isFollowing){
+            await User.findByIdAndUpdate(req.user._id,{$pull:{following:id}})
+            await User.findByIdAndUpdate(id,{$pull:{followers:req.user._id}})
+            res.status(200).json({message:"User Unfollowed successfully"})
+        }
+        else{
+            await User.findByIdAndUpdate(req.user._id,{$push:{following:id}})
+            await User.findByIdAndUpdate(id,{$push:{followers:req.user._id}})
+            res.status(200).json({message:"User followed successfully"})
+        }
+
+    } catch (error) {
+        res.status(500).json({message:error.message})
+    }
+}
+
+const updateUser = async(req,res)=>{
+    const {name, email, username, password, profilePic, bio} = req.body;
+        const userId = req.user._id;
+    try {
+        let user = User.findById(userId)
+        if(!user){
+            res.json(400).json({message:"User not found"})
+         }
+         if (req.params.id !== userId.toString())
+			return res.status(400).json({ error: "You cannot update other user's profile" });
+         if(password){
+            const salt = await brcypt.genSalt(10);
+            const hashedPassword = await brcypt.hash(password,salt);
+            user.password= hashedPassword
+        }
+        user.name = name || user.name;
+        user.bio = bio || user.bio;
+        user.profilePic = profilePic || user.profilePic;
+        user.username = username || user.username;
+        user.email = email || user.email;
+
+        user = await user.save()
+        res.status(200).json({message:"Profile updated!!"})
+
+    } catch (error) {
+        res.status(500).json({message:error.message})
+    }
+}
+
+const getUserProfile = async(req,res)=>{
+    const {username} = req.params
+    try {
+        const user = User.findOne({username}).select("-password").select("-updatedAt")
+        if (!user){
+            res.status(400).json({message:"User not found"})
+        }
+
+        res.status(200).json(user)
+
+    } catch (error) {
+        res.status(500).json({message:error.message})
+    }
+}
+
+export {signupUser, loginUser, logoutUser, followUser, updateUser, getUserProfile}
