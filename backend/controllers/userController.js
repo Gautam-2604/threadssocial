@@ -8,7 +8,7 @@ const signupUser = async(req,res)=>{
         const user = await User.findOne({$or:[{email},{username}]});
         if(user){
             return res.status(400).json({
-               message:"User exists"
+               error:"User exists"
             })
         }
 
@@ -32,11 +32,11 @@ const signupUser = async(req,res)=>{
                 username: newUser.username})
         }
         else{
-            res.status(400).json({message:"Something went wrong"})
+            res.status(400).json({error:"Something went wrong"})
         }
     } catch (error) {
-        res.status(500).json({message:error.message})
-        console.log("Error in signup user = ", error.message);
+        res.status(500).json({error:error.message})
+        
     }
 }
 
@@ -45,11 +45,11 @@ const loginUser = async(req,res)=>{
         const {username,password}=req.body;
         const user = await User.findOne({username});
         if(!user){
-            res.status(400).json({message:"Username doest not exists"})
+            res.status(400).json({error:"Username doest not exists"})
         }
         const isPasswordCorrect = await brcypt.compare(password,user?.password)
         if(!isPasswordCorrect){
-            res.status(400).json({message:"Password incorrect"})
+            res.status(400).json({error:"Password incorrect"})
         }
 
         generateTokenAndSetCookie(user._id,res)
@@ -60,18 +60,18 @@ const loginUser = async(req,res)=>{
             username:user.username
         })
     } catch (error) {
-        res.status(500).json({message:"Error is Login User"})
-        console.log(error.message);
+        res.status(500).json({error:"Error is Login User"})
+        
     }
 }
 
 const logoutUser = async(req,res)=>{
     try {
         res.cookie("jwt","",{maxAge:1});
-        res.status(200).json({message:"User logged out successfully"})
+        res.status(200).json({error:"User logged out successfully"})
     } catch (error) {
-        res.status(500).json({message:"Error while logging out"});
-        console.log(error.message);
+        res.status(500).json({error:"Error while logging out"});
+        
     }
 }
 //for follow and unFollow
@@ -83,27 +83,27 @@ const followUser = async(req,res)=>{
         const currentUser = await User.findById(req.user._id)
 
         if(id===req.user._id){
-            res.status(400).json({message:"You cannot follow/Unfollow yourself"})
+            res.status(400).json({error:"You cannot follow/Unfollow yourself"})
         }
 
         if(!userToModify || !currentUser){
-            res.status(400).json({message:"No User found"})
+            res.status(400).json({error:"No User found"})
         }
 
         const isFollowing = currentUser.following.includes(id)
         if(isFollowing){
             await User.findByIdAndUpdate(req.user._id,{$pull:{following:id}})
             await User.findByIdAndUpdate(id,{$pull:{followers:req.user._id}})
-            res.status(200).json({message:"User Unfollowed successfully"})
+            res.status(200).json({error:"User Unfollowed successfully"})
         }
         else{
             await User.findByIdAndUpdate(req.user._id,{$push:{following:id}})
             await User.findByIdAndUpdate(id,{$push:{followers:req.user._id}})
-            res.status(200).json({message:"User followed successfully"})
+            res.status(200).json({error:"User followed successfully"})
         }
 
     } catch (error) {
-        res.status(500).json({message:error.message})
+        res.status(500).json({error:error.message})
     }
 }
 
@@ -113,7 +113,7 @@ const updateUser = async(req,res)=>{
     try {
         let user = User.findById(userId)
         if(!user){
-            res.json(400).json({message:"User not found"})
+            res.json(400).json({error:"User not found"})
          }
          if (req.params.id !== userId.toString())
 			return res.status(400).json({ error: "You cannot update other user's profile" });
@@ -129,10 +129,10 @@ const updateUser = async(req,res)=>{
         user.email = email || user.email;
 
         user = await user.save()
-        res.status(200).json({message:"Profile updated!!"})
+        res.status(200).json({error:"Profile updated!!"})
 
     } catch (error) {
-        res.status(500).json({message:error.message})
+        res.status(500).json({error:error.message})
     }
 }
 
@@ -141,13 +141,13 @@ const getUserProfile = async(req,res)=>{
     try {
         const user = User.findOne({username}).select("-password").select("-updatedAt")
         if (!user){
-            res.status(400).json({message:"User not found"})
+            res.status(400).json({error:"User not found"})
         }
 
         res.status(200).json(user)
 
     } catch (error) {
-        res.status(500).json({message:error.message})
+        res.status(500).json({error:error.message})
     }
 }
 
