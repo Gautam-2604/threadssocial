@@ -17,14 +17,17 @@ const LogoutButton = () => {
 				},
 			});
 			const data = await res.json();
-
-			if (data.error) {
-				showToast("Error", data.error, "error");
-				return;
-			}
+			console.log(res.status)
+			
+			
 
 			localStorage.removeItem("user-threads");
 			setUser(null);
+			if (data.error) {
+				
+				showToast("Error", data.error, "error");
+				return;
+			}
 		} catch (error) {
 			showToast("Error", error, "error");
 		}
