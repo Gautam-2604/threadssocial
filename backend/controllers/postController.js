@@ -28,4 +28,32 @@ const createPost = async (req,res)=>{
     }
 }
 
-export { createPost}
+const getPost = async(req,res)=>{
+    try {
+        const post = await Post.findById(req.params.id)
+        if(!post){
+            req.status(404).json({message:"Post not found"})
+        }
+        res.status(200).json({message:"Post found",post})
+    } catch (error) {
+        res.status(500).json({message:error.message})
+    }
+}
+
+const deletePost = async(req,res)=>{
+    try {
+        const post = Post.findById(req.params.id)
+        if(!post){
+            res.status(404).json({message:"Post not found"})
+        }
+        if(post.postedBy.toString()!==req.user._id.toString()){
+            res.status(400).json({message:"Unauthorised"})
+        }
+        await Post.findByIdAndDelete(req.params.id)
+        res.status(200).json({message:"Post deleted Successfully"})
+    } catch (error) {
+        res.status(500).json({message:error.message})
+    }
+}
+
+export { createPost, getPost, deletePost}
