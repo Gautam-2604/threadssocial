@@ -19,6 +19,8 @@ import {
 import { useRecoilState } from 'recoil';
 import userAtom from '../atoms/userAtom';
 import { useState } from 'react';
+import { useRef } from 'react';
+import usePreviewImg from '../hooks/usePreviewImg';
   
   export default function UpdateProfilePage() {
     const [user, setUser] = useRecoilState(userAtom)
@@ -28,6 +30,8 @@ import { useState } from 'react';
         bio:user.bio,
         email:user.email
     })
+	const fileRef = useRef(null)
+	const {handleImageChange, imgUrl} = usePreviewImg 
     return (
       <Flex
         
@@ -50,12 +54,17 @@ import { useState } from 'react';
             
             <Stack direction={['column', 'row']} spacing={6}>
               <Center>
-                <Avatar size="xl" src="https://bit.ly/sage-adebayo" />
+                <Avatar size="xl" src={imgUrl || user.profilePic} />
               </Center>
+			  <Center w={'full'}>
+				<Button w={'full'} onClick={()=> fileRef.current.click()}>Change Avatar</Button>
+				<Input type='file' hidden ref={fileRef} onChange={handleImageChange} />
+			  </Center>
+			  
               
             </Stack>
           </FormControl>
-          <FormControl isRequired>
+          <FormControl >
             <FormLabel>User name</FormLabel>
             <Input
               placeholder="UserName"
@@ -65,7 +74,7 @@ import { useState } from 'react';
               onChange={(e)=>setInputs({...inputs, username: e.target.value})}
             />
           </FormControl>
-          <FormControl isRequired>
+          <FormControl >
             <FormLabel>Full Name</FormLabel>
             <Input
               placeholder="Name"
@@ -75,7 +84,7 @@ import { useState } from 'react';
               onChange={(e)=>setInputs({...inputs, name: e.target.value})}
             />
           </FormControl>
-          <FormControl isRequired>
+          <FormControl >
             <FormLabel>Bio</FormLabel>
             <Input
               placeholder="Bio"
@@ -85,7 +94,7 @@ import { useState } from 'react';
               onChange={(e)=>setInputs({...inputs, bio: e.target.value})}
             />
           </FormControl>
-          <FormControl isRequired>
+          <FormControl >
             <FormLabel>email</FormLabel>
             <Input
               placeholder="email"
@@ -111,7 +120,9 @@ import { useState } from 'react';
               w="full"
               _hover={{
                 bg: 'blue.500',
-              }}>
+              }}
+			  type='submit'
+			  >
               Submit
             </Button>
           </Stack>

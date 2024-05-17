@@ -1,6 +1,7 @@
 import User from "../models/userModel.js";
 import brcypt from 'bcryptjs'
 import generateTokenAndSetCookie from "../utils/helpers/generateTokenAndSetCookie.js";
+import { v2 as cloudinary} from 'cloudinary'
 
 const signupUser = async(req,res)=>{
     try {
@@ -125,6 +126,15 @@ const updateUser = async(req,res)=>{
             const hashedPassword = await brcypt.hash(password,salt);
             user.password= hashedPassword
         }
+
+        if (profilePic) {
+			if (user.profilePic) {
+				await cloudinary.uploader.destroy(user.profilePic.split("/").pop().split(".")[0]);
+			}
+
+			const uploadedResponse = await cloudinary.uploader.upload(profilePic);
+			profilePic = uploadedResponse.secure_url;
+		}
         user.name = name || user.name;
         user.bio = bio || user.bio;
         user.profilePic = profilePic || user.profilePic;
