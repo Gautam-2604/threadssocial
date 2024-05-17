@@ -10,7 +10,7 @@ import { Link as RouterLink} from 'react-router-dom'
 
 const UserHeader = ({user}) => {
     const toast = useToast()
-    const currentUser = useRecoilValue(userAtom)  //logged in user
+    const currentUser = useRecoilValue(userAtom)  //logged in current User
     const copyurl = ()=>{
         const currentURL = window.location.href;
         console.log(window);
