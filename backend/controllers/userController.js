@@ -55,13 +55,16 @@ const loginUser = async(req,res)=>{
         if(!isPasswordCorrect){
             res.status(400).json({error:"Password incorrect"})
         }
-
+        
         generateTokenAndSetCookie(user._id,res)
         res.status(200).json({
             _id:user._id,
             name:user.name,
             email:user.email,
-            username:user.username
+            username:user.username,
+            bio: user.bio,
+            profilePic: user.profilePic
+
         })
     } catch (error) {
         res.status(500).json({error:"Error is Login User"})
@@ -115,7 +118,7 @@ const updateUser = async(req,res)=>{
     const {name, email, username, password, profilePic, bio} = req.body;
         const userId = req.user._id;
     try {
-        let user = User.findById(userId)
+        let user = await User.findById(userId)
         if(!user){
             res.json(400).json({error:"User not found"})
          }
@@ -142,7 +145,7 @@ const updateUser = async(req,res)=>{
         user.email = email || user.email;
 
         user = await user.save()
-        res.status(200).json({error:"Profile updated!!"})
+        res.status(200).json({message:"Profile updated!!"})
 
     } catch (error) {
         res.status(500).json({error:error.message})

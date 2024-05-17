@@ -35,7 +35,7 @@ const userSchema = mongoose.Schema(
 		},
 		bio: {
 			type: String,
-			default: "",
+			default:""
 		},
 		isFrozen: {
 			type: Boolean,
