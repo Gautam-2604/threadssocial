@@ -155,7 +155,7 @@ const updateUser = async(req,res)=>{
 const getUserProfile = async(req,res)=>{
     const {username} = req.params
     try {
-        const user = User.findOne({username}).select("-password").select("-updatedAt")
+        const user = await User.findOne({username}).select("-password").select("-updatedAt")
         if (!user){
             res.status(400).json({error:"User not found"})
         }
