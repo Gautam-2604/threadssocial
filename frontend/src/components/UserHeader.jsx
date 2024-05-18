@@ -6,17 +6,59 @@ import { CgMoreO } from 'react-icons/cg'
 import userAtom from '../atoms/userAtom.js'
 import { useRecoilValue } from "recoil"
 import { Link as RouterLink} from 'react-router-dom'
+import { useState } from "react"
+import useShowToast from '../hooks/useShowToast.js'
+
 
 
 const UserHeader = ({user}) => {
     const toast = useToast()
-    const currentUser = useRecoilValue(userAtom)  //logged in current User
+    const currentUser = useRecoilValue(userAtom);//logged in current User
+    const [following, setFollowing] = useState(user.followers.includes(currentUser?._id))
+    const showToast = useShowToast()
+    const [updating, setUpdating] = useState(false)
     const copyurl = ()=>{
         const currentURL = window.location.href;
         console.log(window);
         navigator.clipboard.writeText(currentURL).then(()=>{
             toast({description:'URL copied'})
         })
+    }
+    const handleFollow = async()=>{
+        if(!currentUser){
+            showToast('Error',"Please login to follow",'error')
+            return;
+        }
+        try {
+            const res = await fetch(`/api/users/follow/${user._id}`,{
+                method: "POST",
+                headers:{
+                    "Content-type":"application/json",
+
+                }
+
+
+            })
+            const data = await res.json()
+            
+            setFollowing(!following)
+            if(following){
+                showToast('Success', `Unfollowed ${user.name}`,'success')
+                user.followers.pop()
+            }else{
+                showToast('Success', `Followed ${user.name}`,'success')
+                user.followers.push(currentUser._id)
+            }
+            if(data.error){
+                showToast('Error',data.error,'error');
+                console.log(data.error)
+                return;
+            }
+        } catch (error) {
+            showToast('Error',error,'error')
+        }finally{
+            setUpdating(false)
+        }
     }
   return (
     <VStack gap={4} alignItems={'start'}>
@@ -56,12 +98,20 @@ const UserHeader = ({user}) => {
             </Box>
         </Flex>
         <Text>{user.bio}</Text>
-
+        
         {currentUser?._id === user._id && (
-				<Link as={RouterLink} to='/update'>
-					<Button size={"sm"}>Update Profile</Button>
-				</Link>
-			)}
+            <Link as={RouterLink} to="/update">
+             <Button size={'sm'}>Update Profile</Button>
+            </Link>
+        )}
+        {currentUser?._id !== user._id && (
+            
+             <Button size={'sm'} onClick={handleFollow} isLoading={updating}>
+                {following ? 'Unfollow' : 'Follow'}
+             </Button>
+            
+        )}
+       
 			
 
         <Flex w={'full'} justifyContent={'space-between'}>

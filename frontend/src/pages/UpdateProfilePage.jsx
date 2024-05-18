@@ -163,6 +163,7 @@ export default function UserProfileEdit() {
               bg: 'blue.500',
             }}
             type='submit'
+            isLoading={updating}
             >
             Submit
           </Button>
