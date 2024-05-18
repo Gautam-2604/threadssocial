@@ -115,7 +115,8 @@ const followUser = async(req,res)=>{
 }
 
 const updateUser = async(req,res)=>{
-    const {name, email, username, password, profilePic, bio} = req.body;
+    const {name, email, username, password,  bio} = req.body;
+    let {profilePic} = req.body
         const userId = req.user._id;
     try {
         let user = await User.findById(userId)
