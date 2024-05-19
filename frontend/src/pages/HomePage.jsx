@@ -16,6 +16,7 @@ const HomePage = () => {
 			setPosts([]);
 			try {
 				const res = await fetch("/api/posts/feed");
+				// Not getting this error, look afterwords
 				const data = await res.json();
 				if (data.error) {
 					showToast("Error", data.error, "error");
