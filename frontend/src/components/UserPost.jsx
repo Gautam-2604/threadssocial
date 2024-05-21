@@ -1,14 +1,16 @@
-import { Link, Flex, Avatar, Box, Image, Text } from "@chakra-ui/react"
-import { BsThreeDots } from "react-icons/bs"
-import Actions from "./Actions"
-import { useState } from "react"
+import { Avatar } from "@chakra-ui/avatar";
+import { Image } from "@chakra-ui/image";
+import { Box, Flex, Text } from "@chakra-ui/layout";
+import { BsThreeDots } from "react-icons/bs";
+import { Link } from "react-router-dom";
+import Actions from "./Actions";
+import { useState } from "react";
 
-
-const UserPost = ({likes,replies,postImg,postTitle}) => {
-    const [liked, setLiked] = useState(false)
-  return (
-    <Link to={'/markzuckerberg/post/1'}>
-        <Flex gap={3} mb={4} py={5}>
+const UserPost = ({ postImg, postTitle, likes, replies }) => {
+	const [liked, setLiked] = useState(false);
+	return (
+		<Link to={"/markzuckerberg/post/1"}>
+			<Flex gap={3} mb={4} py={5}>
 				<Flex flexDirection={"column"} alignItems={"center"}>
 					<Avatar size='md' name='Mark Zuckerberg' src='/zuck-avatar.png' />
 					<Box w='1px' h={"full"} bg='gray.light' my={2}></Box>
@@ -37,12 +39,12 @@ const UserPost = ({likes,replies,postImg,postTitle}) => {
 							src='https://bit.ly/prosper-baba'
 							position={"absolute"}
 							bottom={"0px"}
-                            left='4px'
+							left='4px'
 							padding={"2px"}
 						/>
 					</Box>
 				</Flex>
-                <Flex flex={1} flexDirection={"column"} gap={2}>
+				<Flex flex={1} flexDirection={"column"} gap={2}>
 					<Flex justifyContent={"space-between"} w={"full"}>
 						<Flex w={"full"} alignItems={"center"}>
 							<Text fontSize={"sm"} fontWeight={"bold"}>
@@ -57,13 +59,15 @@ const UserPost = ({likes,replies,postImg,postTitle}) => {
 							<BsThreeDots />
 						</Flex>
 					</Flex>
-                    <Text fontSize={"sm"}>{postTitle}</Text>
-					<Box borderRadius={6} overflow={'hidden'} border='1px solid' borderColor='gray.light'>
-                        <Image src={postImg} width={'full'} />
-                    </Box>
+
+					<Text fontSize={"sm"}>{postTitle}</Text>
+					{postImg && (
+						<Box borderRadius={6} overflow={"hidden"} border={"1px solid"} borderColor={"gray.light"}>
+							<Image src={postImg} w={"full"} />
+						</Box>
+					)}
 
 					<Flex gap={3} my={1}>
-                        {/*Actions from actions component-see*/}
 						<Actions liked={liked} setLiked={setLiked} />
 					</Flex>
 
@@ -79,9 +83,7 @@ const UserPost = ({likes,replies,postImg,postTitle}) => {
 				</Flex>
 			</Flex>
 		</Link>
-      
-    
-  )
-}
+	);
+};
 
-export default UserPost
+export default UserPost;
