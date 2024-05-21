@@ -70,6 +70,7 @@ const signupUser = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
+    //loging in
 	try {
 		const { username, password } = req.body;
 		const user = await User.findOne({ username });
